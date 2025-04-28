@@ -5,7 +5,7 @@
 
 ## CPU结构图
 
-<img src="E:\Sustech\25Spring_ComputerDesign\Project\cpu_1\图片\398bd57c1fe057fa46eb4ae149dabfa.png" alt="398bd57c1fe057fa46eb4ae149dabfa" style="zoom:60%;" />
+<img src=".\图片\398bd57c1fe057fa46eb4ae149dabfa.png" alt="398bd57c1fe057fa46eb4ae149dabfa" style="zoom:60%;" />
 
 ## 核心组件说明
 
@@ -25,11 +25,11 @@
 
      - 初始化及顺序读取测试
 
-       <img src="E:\Sustech\25Spring_ComputerDesign\Project\cpu_1\图片\image-20250428211027924.png" alt="image-20250428211027924" style="zoom: 55%;" />
+       <img src=".\图片\image-20250428211027924.png" alt="image-20250428211027924" style="zoom: 55%;" />
 
      - 跳转测试
 
-       <img src="E:\Sustech\25Spring_ComputerDesign\Project\cpu_1\图片\image-20250428210625977.png" alt="image-20250428210625977" style="zoom: 45%;" />
+       <img src=".\图片\image-20250428210625977.png" alt="image-20250428210625977" style="zoom: 45%;" />
 
 2. **控制单元(Control Unit)**
 
