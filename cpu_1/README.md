@@ -5,7 +5,7 @@
 
 ## CPU结构图
 
-<img src=".\图片\398bd57c1fe057fa46eb4ae149dabfa.png" alt="398bd57c1fe057fa46eb4ae149dabfa" style="zoom:60%;" />
+![image-20250501032207713](.\图片\image-20250501032207713.png)
 
 ## 核心组件说明
 
