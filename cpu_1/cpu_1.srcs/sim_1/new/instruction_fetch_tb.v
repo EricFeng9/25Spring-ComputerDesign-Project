@@ -19,7 +19,7 @@ module instruction_fetch_tb();
         .pc_next(pc_next)  // 连接pc_next输出
         );
     // 更新pc
-    always @(*) begin
+    always @(negedge clk) begin
         if (rst) begin
             pc <= 32'h0;  // 复位时PC置零
         end else begin

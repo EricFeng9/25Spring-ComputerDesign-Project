@@ -41,7 +41,7 @@ module instruction_fetch(clk, branch_taken, rst, imm32, pc,instruction,pc_next);
             end
         end
     end
-    // 输出为32位的instruction
+    // 输出为32位的instruction 
     instruction_mem urom(.clka(clk), .addra(pc_next[15:2]), .douta(instruction));
     
 endmodule
