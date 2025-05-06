@@ -38,12 +38,12 @@ module top(
     wire [31:0] reg_write_data; // 寄存器写数据
     wire reg_write_en;          // 寄存器写使能
    
-
+    //5.3改动：alu_op应为两位
     // ALU相关信号
     wire [31:0] alu_input1;     // ALU输入1
     wire [31:0] alu_input2;     // ALU输入2
     wire [31:0] alu_result;     // ALU结果 -接到MemOrIO
-    wire [3:0] alu_op;          // ALU操作码
+    wire [1:0] alu_op;          // ALU操作码
     wire alu_zero;              // ALU零标志
     
     // io 相关信号
@@ -149,14 +149,16 @@ module top(
         .sel(alu_src),
         .alu_input(alu_input2)
     );
-
+    //5.3改动：需要接入func3和指令第三十位
     // ALU - 执行算术逻辑运算
     alu alu_unit (
         .a(alu_input1),
         .b(alu_input2),
         .alu_op(alu_op),
         .result(alu_result),
-        .zero(alu_zero)
+        .zero(alu_zero),
+        .funct3(funct3),
+        .inst_30(instruction[30])
     );
     
     //IO部分
