@@ -48,7 +48,7 @@
    - 输出：两个读出的寄存器数据
    - 功能测试
    - ![.\图片\reg_test_5_6.png](.\图片\reg_test_5_6.png)
-
+   - <img src=".\图片\reg_test_5_6.png" alt="image-20250428211027924" style="zoom: 80%;" />
 4. **ALU(算术逻辑单元)**
 
    > 苏思齐
