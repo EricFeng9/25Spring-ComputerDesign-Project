@@ -1,38 +1,21 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 2025/04/28 20:05:46
-// Design Name: 
-// Module Name: writeback_mux
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
+// å†™å›å¤šè·¯å¤ç”¨å™¨æ¨¡å—
+// ç”¨äºé€‰æ‹©å†™å…¥å¯„å­˜å™¨çš„æ•°æ®
 //////////////////////////////////////////////////////////////////////////////////
 
-
-// Ğ´»Ø¶àÂ·¸´ÓÃÆ÷Ä£¿é
 module writeback_mux (
-    input wire [31:0] r_wdata,  // ´Ómem_or_ioÖĞÄÃµ½Ğ´»Ø¼Ä´æÆ÷µÄdata£¬¾ÍÊÇÔ­±¾µÄalu_result
-    input wire [31:0] mem_data,    // ´æ´¢Æ÷Êı¾İ
-    input wire [0:0] mem_to_reg,      // ¼Ä´æÆ÷Ğ´ÈëÔ´Ñ¡Ôñ
-    output reg [31:0] write_data   // Ğ´»ØÊı¾İ
+    input wire [31:0] r_wdata,    // ä»mem_or_ioå¾—åˆ°çš„å†™å›å¯„å­˜å™¨çš„dataæ•°æ®
+    input wire [31:0] mem_data,   // å­˜å‚¨å™¨æ•°æ®
+    input wire [0:0] mem_to_reg,  // å¯„å­˜å™¨å†™å›æºé€‰æ‹©
+    output reg [31:0] write_data  // å†™å›æ•°æ®
 );
     always @(*) begin
        if(mem_to_reg == 1'b0) begin
-           write_data = r_wdata;
+           write_data = r_wdata;   // é€‰æ‹©ä»mem_or_ioå¾—åˆ°çš„æ•°æ®
        end
        else begin
-           write_data = mem_data;
+           write_data = mem_data;  // é€‰æ‹©ä»å­˜å‚¨å™¨è¯»å–çš„æ•°æ®
        end
    end
 endmodule
