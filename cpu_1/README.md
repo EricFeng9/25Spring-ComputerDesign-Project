@@ -47,8 +47,7 @@
    - 输入：读寄存器地址(rs1, rs2)，写寄存器地址(rd)，写数据，写使能
    - 输出：两个读出的寄存器数据
    - 功能测试
-   - ![.\图片\reg_test_5_6.png](.\图片\reg_test_5_6.png)
-   - <img src=".\图片\reg_test_5_6.png" alt="image-20250428211027924" style="zoom: 80%;" />
+   - <img src=".\图片\alu_test_5_6.png" alt=".\图片\alu_test_5_6.png" style="zoom: 80%;" />
 4. **ALU(算术逻辑单元)**
 
    > 苏思齐
@@ -57,8 +56,7 @@
    - 输入：两个操作数，ALU操作码
    - 输出：运算结果，零标志
    - 功能测试
-   - ![](.\图片\alu_test_5_6.png)
-
+   - <img src=".\图片\alu_test_5_6.png" alt=".\图片\alu_test_5_6.png" style="zoom: 80%;" />
 5. **数据存储器(Data Memory)**
 
    > 直接使用IP核
