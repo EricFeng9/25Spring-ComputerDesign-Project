@@ -25,7 +25,7 @@ module control_unit(
 input [6:0] opcode,       
 input [2:0] funct3,          
 input [6:0] funct7,
-output reg branch, mem_to_reg, alu_src, 
+output reg branch, alu_src, // mem_to_reg,
 reg_write_en, mem_write_en, mem_read_en,
 jump,//后续的地方没用，给了jalr指令
 output reg [1:0]alu_op,//top原定4bits;
@@ -43,7 +43,6 @@ output reg io_write_en, io_read_en  // IO控制信号
         alu_src = 1'b0;
         mem_write_en = 1'b0;
         mem_read_en = 1'b0;
-        mem_to_reg = 1'b0;
         branch = 1'b0;
         alu_op = 2'b11;
         jump = 1'b0;
@@ -68,7 +67,6 @@ output reg io_write_en, io_read_en  // IO控制信号
                 reg_write_en = 1'b1;
                 alu_src = 1'b1;
                 mem_read_en = 1'b1;
-                mem_to_reg = 1'b1;
                 alu_op = 2'b00;
                 io_read_en = 1'b1;  // 同时可能读取IO设备
             end
@@ -87,19 +85,25 @@ output reg io_write_en, io_read_en  // IO控制信号
                 alu_op = 2'b01;
             end
                    
-            // Jump指令 (JAL)
-            7'b1101111: begin
+            // Jump指令 
+            7'b1101111,7'b1100111: begin //JAL,jalr
                 reg_write_en = 1'b1;
+                alu_src=1'b1;
                 jump = 1'b1;
             end 
-                      
+            
+            //lui,auipc
+            7'b0110111,7'b0010111:begin 
+                reg_write_en = 1'b1;
+                alu_src=1'b1;
+            end
+            
             default: begin
                 // 无操作或未知指令
                 reg_write_en = 1'b0;
                 alu_src = 1'b0;
                 mem_write_en = 1'b0;
                 mem_read_en = 1'b0;
-                mem_to_reg = 1'b0;
                 branch = 1'b0;
                 alu_op = 2'b11;
                 jump = 1'b0;
