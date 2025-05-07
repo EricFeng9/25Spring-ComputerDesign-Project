@@ -1,0 +1,4 @@
+# 忽略Vivado生成的缓存和硬件文件
+cpu_1/cpu_1.cache/
+cpu_1/cpu_1.hw/
+cpu_1/cpu_1.sim/
