@@ -47,7 +47,7 @@ module immediate_gen_tb;
         else instruction = 32'b000000001100_00101_010_00100_0000011; // lw x4, 12(x5) 00c2a203
         #10;
         if (imm !== 32'h0000000c) $error("lw 正偏移量测试失败，得到 %h", imm);
-        else $display("I-type 负数测试通过");
+        else $display("I-type 正数测试通过");
         
         // 2. S-type 测试 (Store)
         $display("\n测试 S-type 指令...");
