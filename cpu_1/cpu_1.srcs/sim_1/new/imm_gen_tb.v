@@ -35,7 +35,7 @@ module immediate_gen_tb;
         // 负数测试
         instruction = 32'b111111100000_00101_000_00100_0010011; // addi x4, x5, -32 :32'hfe028213
         #10;
-        if (imm !== 32'hffffffe0) $error("I-type 正数测试失败，得到 %h", imm);
+        if (imm !== 32'hffffffe0) $error("I-type 负数测试失败，得到 %h", imm);
         else instruction = 32'b111111110100_00101_010_00100_0000011; // lw x4, -12(x5) ff42a203
         #10;
         if (imm !== 32'hfffffff4) $error("lw 负偏移量测试失败，得到 %h", imm);
@@ -43,7 +43,7 @@ module immediate_gen_tb;
         // 正数测试
         instruction = 32'b000000001111_00101_000_00100_0010011; // addi x4, x5, 15 00f28213
         #10;
-        if (imm !== 32'h0000000f) $error("I-type 负数测试失败，得到 %h", imm);
+        if (imm !== 32'h0000000f) $error("I-type 正数测试失败，得到 %h", imm);
         else instruction = 32'b000000001100_00101_010_00100_0000011; // lw x4, 12(x5) 00c2a203
         #10;
         if (imm !== 32'h0000000c) $error("lw 正偏移量测试失败，得到 %h", imm);
