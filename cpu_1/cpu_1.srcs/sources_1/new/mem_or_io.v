@@ -43,6 +43,7 @@ module mem_or_io(
         m_wdata = 32'h0;
         r_wdata = 32'h0;
         
+        //橙色数据流
         // 读取数据路径 (由mem_read_en或io_read_en控制)
         if(io_read_en && is_io_addr) begin
             if(addr_in == SWITCH_BASE) begin
@@ -55,7 +56,12 @@ module mem_or_io(
             // 内存读取状态，寄存器读入memory的值
             r_wdata = m_rdata;
         end
+        else begin
+            // 默认情况下，对于算术、逻辑等指令，直接使用ALU的结果
+            r_wdata = addr_in;  // addr_in实际上是ALU的计算结果
+        end
         
+        //黄色数据流
         // 写入数据路径 (由mem_write_en或io_write_en控制)
         if(io_write_en && is_io_addr) begin
             if(addr_in == LED_BASE) begin

@@ -84,7 +84,6 @@ module top(
 
     // 控制信号
     wire alu_src;                   // ALU源选择信号
-    wire mem_to_reg;                // 存储器到寄存器选择信号
     wire branch;                    // 分支信号
     wire jump;                      // 跳转信号
     wire [1:0] reg_src;             // 寄存器源选择信号
@@ -176,7 +175,6 @@ module top(
         .alu_src(alu_src),
         .mem_write_en(mem_write_en),
         .mem_read_en(mem_read_en),
-        .mem_to_reg(mem_to_reg),
         .branch(branch),
         .jump(jump),
         .io_write_en(io_write_en),
