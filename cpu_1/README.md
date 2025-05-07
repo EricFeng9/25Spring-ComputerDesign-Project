@@ -35,9 +35,20 @@
    > 周子希
 
    - 功能：解码指令并生成各种控制信号
+
    - 输入：指令的opcode, funct3, funct7字段
+
    - 输出：ALU操作码、寄存器写使能、ALU源选择、存储器读写使能等控制信号
+
    - 功能测试
+
+     （对各类型指令的测试均正确）
+
+     <img src=".\图片\control_unit_tb.png" alt=".\图片\control_unit_tb" style="zoom: 80%;" />
+
+     TCL窗口信息:
+
+     <img src=".\图片\control_unit_tb_tcl.png" alt=".\图片\control_unit_tb_tcl" style="zoom: 55%;" />
 
 3. **寄存器堆(Register File)**
 
@@ -48,6 +59,7 @@
    - 输出：两个读出的寄存器数据
    - 功能测试
    - <img src=".\图片\alu_test_5_6.png" alt=".\图片\alu_test_5_6.png" style="zoom: 80%;" />
+
 4. **ALU(算术逻辑单元)**
 
    > 苏思齐
@@ -57,6 +69,7 @@
    - 输出：运算结果，零标志
    - 功能测试
    - <img src=".\图片\alu_test_5_6.png" alt=".\图片\alu_test_5_6.png" style="zoom: 80%;" />
+
 5. **数据存储器(Data Memory)**
 
    > 直接使用IP核
@@ -70,9 +83,20 @@
    > 周子希
 
    - 功能：从指令中提取并扩展立即数
+
    - 输入：指令
+
    - 输出：扩展后的立即数
+
    - 功能测试
+
+     （对各类型指令，包括I-type中的正负数imm等情况均进行了测试，均正确。）
+
+     <img src=".\图片\Imm_gen_tb.png" alt=".\图片\Imm_gen_tb.png" style="zoom: 70%;" />
+
+     TCL窗口信息：
+
+     <img src=".\图片\imm-gen-tb-tcl.png" alt=".\图片\imm-gen-tb-tcl.png" style="zoom: 50%;" />
 
 ### 多路复用器(MUX)
 
