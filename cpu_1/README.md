@@ -250,3 +250,100 @@ parameter ALU_SUB = 4'b0001;
 - 开发时间：2025年春季学期
 - 课程：计算机设计与实践
 - 学校：南方科技大学 
+
+
+
+## 其他信息
+
+### 5.8 - CPU 设计修改：JAL/JALR/LUI/AUIPC 指令处理优化
+
+> 冯俊铭 5.8
+
+**目标：** 确保 JAL, JALR, LUI, 和 AUIPC 指令能够正确执行，并将预期结果写回目标寄存器。本次修改的核心思想是将所有寄存器的写回数据选择逻辑集中在 `mem_or_io` 模块中，通过 `control_unit` 产生新的控制信号进行协调。
+
+**主要修改模块：**
+
+1.  `control_unit.v`
+2.  `mem_or_io.v`
+3.  `top.v`
+
+---
+
+#### `control_unit.v` 的修改
+
+**新增输出端口：**
+
+*   `output reg alu_src_1;`: 用于为 AUIPC 指令选择 ALU 的第一个输入源。
+    *   `0`: 选择 `reg_data1` (默认)
+    *   `1`: 选择 `PC`
+*   `output reg [1:0] wb_select;`: 用于指示 `mem_or_io` 模块选择哪个数据源写回寄存器。
+    *   `2'b00`: ALU 计算结果
+    *   `2'b01`: 从数据内存或 IO 设备读取的数据
+    *   `2'b10`: `PC + 4`
+    *   `2'b11`: 立即数 (主要用于 LUI)
+
+**主要逻辑修改 (`always @(*)`块内)：**
+
+*   **JAL 和 JALR 指令 (`opcode == 7'b1101111` 或 `7'b1100111`)**:
+    *   `reg_write_en = 1'b1;`
+    *   `jump = 1'b1;`
+    *   `wb_select = 2'b10;` (选择 `PC + 4` 进行写回)
+    *   对于 JALR，`alu_src_2 = 1'b1;` 以便 ALU 计算 `rs1 + imm` 作为下一个 PC 值（注意：这个ALU计算结果不用于写回 `rd`）。
+    *   `alu_op` 对于 JALR 的 `rd` 写回路径不关键，对于 JAL 的 `rd` 写回路径也不关键。
+
+*   **LUI 指令 (`opcode == 7'b0110111`)**:
+    *   `reg_write_en = 1'b1;`
+    *   `wb_select = 2'b11;` (选择立即数 `imm` 进行写回)。
+    *   `alu_src_1`, `alu_src_2`, `alu_op` 对于 LUI 指令写回 `rd` 的路径不是必需的，因为结果直接来自立即数。
+
+*   **AUIPC 指令 (`opcode == 7'b0010111`)**:
+    *   `reg_write_en = 1'b1;`
+    *   `alu_src_1 = 1'b1;` (ALU 的第一个输入选择 `PC`)。
+    *   `alu_src_2 = 1'b1;` (ALU 的第二个输入选择 `imm`)。
+    *   `alu_op = 2'b00;` (使 `alu_control` 模块产生 ALU 加法操作)。
+    *   `wb_select = 2'b00;` (选择 ALU 的计算结果 `PC + imm` 进行写回)。
+
+*   **其他指令类型的 `wb_select` 设置**:
+    *   R-type 和 I-type 算术/逻辑指令: `wb_select = 2'b00;` (写回 ALU 结果)。
+    *   Load 指令: `wb_select = 2'b01;` (写回从内存/IO 读取的数据)。
+    *   Store 和 Branch 指令: 不写回寄存器，`reg_write_en = 1'b0;`，`wb_select` 为默认值或不关心。
+
+---
+
+#### `mem_or_io.v` 的修改
+
+**新增输入端口：**
+
+*   `input wire [31:0] pc_plus4;`: 从 `top.v` 传入 `PC + 4` 的值。
+*   `input wire [31:0] imm;`: 从 `top.v` 传入由 `immediate_gen` 生成的立即数。
+*   `input wire [1:0] wb_select;`: 从 `control_unit.v` 传入的写回数据源选择信号。
+
+**主要逻辑修改 (`always @(*)`块内)：**
+
+*   **核心写回选择逻辑**:
+    *   一个 `case (wb_select)` 语句根据 `wb_select` 的值，选择以下数据源之一赋给 `output reg [31:0] r_wdata`：
+        *   `2'b00`: `addr_in` (即 ALU 的计算结果)
+        *   `2'b01`: `data_from_mem_or_io_source` (从数据内存或 IO 设备读取的数据，此内部信号逻辑保持不变)
+        *   `2'b10`: `pc_plus4` (传入的 `PC + 4` 值)
+        *   `2'b11`: `imm` (传入的立即数值)
+*   `r_wdata` 作为模块的输出，将直接连接到寄存器堆的写数据端口。
+
+---
+
+#### `top.v` 的修改
+
+**主要连接和逻辑调整：**
+
+*   **控制信号传递**：
+    *   `control_unit` 输出的 `alu_src_1` 和 `wb_select` 信号被正确连接。
+*   **ALU 输入1 的选择**：
+    *   增加了一个 `mux_alu_input` 实例 (`umux_alu_input1`)。
+    *   该 MUX 根据 `alu_src_1` 的值选择 `reg_data1` 或 `pc` 作为 ALU 的第一个输入 (`alu_input1`)。这主要服务于 AUIPC 指令。
+*   **数据传递到 `mem_or_io`**：
+    *   `ifetch` 模块输出的 `pc_plus4` 值连接到 `mem_or_io` 模块的 `pc_plus4` 输入。
+    *   `immediate_gen` 模块输出的 `imm` 值连接到 `mem_or_io` 模块的 `imm` 输入。
+*   **写回数据路径**：
+    *   `mem_or_io` 模块输出的 `r_wdata` 直接连接到 `register_file` 模块的 `write_data` 输入端口。
+    *   不再需要在 `top.v` 中实例化一个独立的4选1写回MUX。
+
+

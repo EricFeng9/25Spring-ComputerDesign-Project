@@ -21,11 +21,11 @@ module instruction_fetch(
     input wire upg_done,             // UART编程完成
     
     output reg [31:0] pc,            // 程序计数器
-    output wire [31:0] instruction   // 当前指令
+    output wire [31:0] instruction,   // 当前指令
+    output wire [31:0] pc_plus4     // PC+4(把PC+4暴露出来)
 );
     
     // PC更新逻辑
-    wire [31:0] pc_plus4;            // PC+4
     wire [31:0] pc_branch;           // 分支目标地址
     wire [31:0] pc_next;             // 下一个PC值
     

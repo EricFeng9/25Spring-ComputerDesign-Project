@@ -41,6 +41,7 @@ module top(
     //----------- 内部信号 -----------
     // IFetch 相关信号
     wire [31:0] pc;                 // 程序计数器
+    wire [31:0] pc_plus4;
     wire branch_taken;              // 分支条件满足
     
     // 指令相关信号
@@ -60,6 +61,8 @@ module top(
     wire reg_write_en;              // 寄存器写使能
    
     // ALU相关信号
+    wire alu_src_2;                   // ALU第二个源选择信号
+    wire alu_src_1;
     wire [31:0] alu_input1;         // ALU输入1
     wire [31:0] alu_input2;         // ALU输入2
     wire [31:0] alu_result;         // ALU结果 -接到MemOrIO
@@ -67,8 +70,9 @@ module top(
     wire alu_zero;                  // ALU零标志
     
     // IO 相关信号
-    wire io_read_en;                // IO读信号，来自Controller
-    wire io_write_en;               // IO写信号，来自Controller
+    wire io_read_en;                // IO读信号，从 control_unit 输出
+    wire io_write_en;               // IO写信号，从 control_unit 输出
+    wire [1:0] wb_select;           // 选择写回寄存器的选择信号，从 control_unit 输出
     wire [31:0] addr_out;           // 地址输出，连接到Data mem
     reg [31:0] io_rdata;            // 从IO设备读取的数据(拨码开关等)
     wire [31:0] r_wdata;            // 从mem or io中读取出来写进寄存器的数据
@@ -83,7 +87,6 @@ module top(
     wire mem_read_en;               // 存储器读使能
 
     // 控制信号
-    wire alu_src;                   // ALU源选择信号
     wire branch;                    // 分支信号
     wire jump;                      // 跳转信号
     wire [1:0] reg_src;             // 寄存器源选择信号
@@ -153,10 +156,11 @@ module top(
         .upg_done(upg_done_o),                   // UART编程完成
         
         .pc(pc),                                 // 程序计数器输出
+        .pc_plus4(pc_plus4),                     // pc+4的值
         .instruction(instruction)                // 当前指令输出
     );
     
-    // 控制单元 - 解码指令并生成控制信号
+
     // 连接指令字段
     assign opcode = instruction[6:0];
     assign rd = instruction[11:7];
@@ -165,20 +169,20 @@ module top(
     assign rs2 = instruction[24:20];
     assign funct7 = instruction[31:25];
     
-    // 控制单元 - 生成各种控制信号
     control_unit ucontrol_unit (
         .opcode(opcode),
         .funct3(funct3),
         .funct7(funct7),
         .alu_op(alu_op),
         .reg_write_en(reg_write_en),
-        .alu_src(alu_src),
+        .alu_src_2(alu_src_2),
         .mem_write_en(mem_write_en),
         .mem_read_en(mem_read_en),
         .branch(branch),
         .jump(jump),
         .io_write_en(io_write_en),
-        .io_read_en(io_read_en)
+        .io_read_en(io_read_en),
+        .wb_select(wb_select)
     );
 
     // 立即数生成器 - 根据指令类型生成立即数
@@ -200,14 +204,20 @@ module top(
         .read_data2(reg_data2)
     );
 
-    // ALU输入1选择
-    assign alu_input1 = reg_data1;
- 
+
+    // ALU输入1多路复用器 - 选择ALU第一个输入(为 AUIPC 服务)
+    mux_alu_input umux_alu_input1 (
+        .data0(reg_data1),
+        .data1(pc),
+        .sel(alu_src_1),
+        .alu_input(alu_input1)
+    );
+    
     // ALU输入2多路复用器 - 选择ALU第二个输入
-    mux_alu_input umux_alu_input (
-        .reg_data(reg_data2),
-        .imm_data(imm),
-        .sel(alu_src),
+    mux_alu_input umux_alu_input2 (
+        .data0(reg_data2),
+        .data1(imm),
+        .sel(alu_src_2),
         .alu_input(alu_input2)
     );
     //5.3改动：需要接入func3和指令第三十位
@@ -252,6 +262,9 @@ module top(
         .m_rdata(mem_read_data),
         .io_rdata(io_rdata),
         .r_wdata(r_wdata),              // 直接产生要写回寄存器的数据
+        .pc_plus4(pc_plus4),            //接入pc_plus4方便jal
+        .imm(imm),  //接入immgen生成的立即数，方便
+        .wb_select(wb_select), //control unit给的写回数据源选择信号: 00:ALU结果, 01:Mem/IO数据, 10:PC+4, 11:Imm
         .r_rdata(reg_data2),
         .io_wdata(io_wdata),
         .m_wdata(mem_write_data),

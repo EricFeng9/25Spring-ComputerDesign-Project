@@ -1,10 +1,10 @@
 -- Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2017.4 (win64) Build 2086221 Fri Dec 15 20:55:39 MST 2017
--- Date        : Sat May  3 14:58:40 2025
--- Host        : tapakya1069 running 64-bit major release  (build 9200)
+-- Date        : Thu May  8 02:49:28 2025
+-- Host        : Lekge2025 running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub
---               c:/Users/BenjaminSo/Downloads/25Spring-ComputerDesign-Project-5.1/25Spring-ComputerDesign-Project-5.1/cpu_1/cpu_1.srcs/sources_1/ip/register_block/register_block_stub.vhdl
+--               E:/Sustech/25Spring_ComputerDesign/Project/25Spring-ComputerDesign-Project/cpu_1/cpu_1.srcs/sources_1/ip/register_block/register_block_stub.vhdl
 -- Design      : register_block
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a35tcsg324-1
