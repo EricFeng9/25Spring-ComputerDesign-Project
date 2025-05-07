@@ -96,7 +96,7 @@
 
      TCL窗口信息：
 
-     <img src=".\图片\imm-gen-tb-tcl.png" alt=".\图片\imm-gen-tb-tcl.png" style="zoom: 50%;" />
+     <img src=".\图片\imm_gen_tb_tcl.png" alt=".\图片\imm_gen_tb_tcl.png" style="zoom: 50%;" />
 
 ### 多路复用器(MUX)
 
