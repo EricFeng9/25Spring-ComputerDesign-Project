@@ -136,7 +136,22 @@ module top(
     
     //----------- 指令获取和程序内存 -----------
     // 判断是否分支/跳转
-    assign branch_taken = branch & alu_zero;
+    // 根据branch类型 (funct3)决定分支条件
+    wire branch_condition;
+    wire unsigned_less;             // 无符号比较结果: 如果rs1 < rs2 (无符号比较)则为1
+    
+    // 无符号比较直接比较alu的两个input 当alu_input1 < alu_input2时为1
+    // 在Verilog < 默认是无符号比较
+    assign unsigned_less = (alu_input1 < alu_input2);
+    assign branch_condition = (funct3 == 3'h0) ? alu_zero :      // beq: 相等时跳转
+                             (funct3 == 3'h1) ? ~alu_zero :     // bne: 不相等时跳转
+                             (funct3 == 3'h4) ? (alu_result[31]) : // blt: 结果为负数时跳转
+                             (funct3 == 3'h5) ? (~alu_result[31]) : // bge: 结果为正数或0时跳转
+                             (funct3 == 3'h6) ? unsigned_less : // bltu: rs1 < rs2 (无符号比较)时跳转
+                             (funct3 == 3'h7) ? ~unsigned_less : // bgeu: rs1 >= rs2 (无符号比较)时跳转
+                             1'b0;  // 其他分支类型暂不支持
+    
+    assign branch_taken = branch & branch_condition;
     
     // 使用instruction_fetch模块
     instruction_fetch ifetch(

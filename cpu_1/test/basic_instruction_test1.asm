@@ -34,12 +34,12 @@ equal:
     addi x12, x0, 100      # x12 = 100	p
     
 continue:
-    bne  x3, x2, not_equal # 如果x3 != x2，跳转到not_equal (应该跳转，15 != 5)
+    bne  x3, x2, not_equal # 如果x3 != x2，跳转到not_equal (应该跳转，15 != 5) p
     addi x13, x0, 2        # 不应执行
     j    continue2
     
 not_equal:
-    addi x13, x0, 200      # x13 = 200
+    addi x13, x0, 200      # x13 = 200	p
     
 continue2:
     blt  x2, x3, less_than # 如果x2 < x3，跳转到less_than (应该跳转，5 < 15)
