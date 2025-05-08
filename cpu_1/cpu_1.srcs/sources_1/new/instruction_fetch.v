@@ -36,7 +36,7 @@ module instruction_fetch(
     // 选择下一个PC值
     assign pc_next = (branch_taken || jump) ? pc_branch : pc_plus4;
     
-    // 更新PC
+
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             pc <= 32'h0;            // 复位时PC置零

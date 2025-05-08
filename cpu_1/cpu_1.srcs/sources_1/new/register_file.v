@@ -22,13 +22,13 @@ output [31:0]read_data2
 
 //·À´æ0»úÖÆ
 wire [31:0] actual_write_data = (write_reg == 5'd0) ? 32'b0 : write_data;
-wire actual_we = (write_reg == 5'd0) ? 1'b0 : reg_write_en;
+//wire actual_we = (write_reg == 5'd0) ? 1'b0 : reg_write_en;
 wire rst0=1'b0;
 
 register_file_dist r1(
     .clk(clk),
     .rst(rst0),
-    .reg_write_en(write_reg),
+    .reg_write_en(reg_write_en),
     .read_reg1(read_reg1),
     .read_reg2(read_reg2),
     .write_reg(write_reg),

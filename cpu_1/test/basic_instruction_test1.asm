@@ -5,33 +5,33 @@
 
 main:
     # 初始化寄存器
-    addi x1, x0, 10        # x1 = 10
-    addi x2, x0, 5         # x2 = 5
+    addi x1, x0, 10        # x1 = 10	p
+    addi x2, x0, 5         # x2 = 5	p
     
     # 测试R型指令
-    add  x3, x1, x2        # x3 = 10 + 5 = 15
-    sub  x4, x1, x2        # x4 = 10 - 5 = 5
-    or   x5, x1, x2        # x5 = 10 | 5 = 15
-    and  x6, x1, x2        # x6 = 10 & 5 = 0
+    add  x3, x1, x2        # x3 = 10 + 5 = 15	p
+    sub  x4, x1, x2        # x4 = 10 - 5 = 5	p
+    or   x5, x1, x2        # x5 = 10 | 5 = 15	p
+    and  x6, x1, x2        # x6 = 10 & 5 = 0	p
     
     # 测试移位指令
-    addi x7, x0, 1         # x7 = 1
-    sll  x8, x7, x2        # x8 = 1 << 5 = 32
-    srl  x9, x3, x7        # x9 = 15 >> 1 = 7
+    addi x7, x0, 1         # x7 = 1	p
+    sll  x8, x7, x2        # x8 = 1 << 5 = 32	p
+    srl  x9, x3, x7        # x9 = 15 >> 1 = 7	p
     
     # 测试存储和加载
-    sw   x3, 0(x0)         # 保存15到内存地址0
-    sw   x4, 4(x0)         # 保存5到内存地址4
-    lw   x10, 0(x0)        # x10 = 内存[0] = 15
-    lw   x11, 4(x0)        # x11 = 内存[4] = 5
+    sw   x3, 0(x0)         # 保存15到内存地址0	p
+    sw   x4, 4(x0)         # 保存5到内存地址4	p
+    lw   x10, 0(x0)        # x10 = 内存[0] = 15	p
+    lw   x11, 4(x0)        # x11 = 内存[4] = 5	p
     
     # 测试分支指令
-    beq  x4, x2, equal     # 如果x4 == x2，跳转到equal (应该跳转，两者都是5)
+    beq  x4, x2, equal     # 如果x4 == x2，跳转到equal (应该跳转，两者都是5)	p
     addi x12, x0, 1        # 不应执行
     j    continue
     
 equal:
-    addi x12, x0, 100      # x12 = 100
+    addi x12, x0, 100      # x12 = 100	p
     
 continue:
     bne  x3, x2, not_equal # 如果x3 != x2，跳转到not_equal (应该跳转，15 != 5)

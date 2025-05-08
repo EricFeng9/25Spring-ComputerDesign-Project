@@ -123,6 +123,7 @@ output reg [1:0] wb_select  // 写回数据源选择信号: 00:ALU结果, 01:Mem/IO数据, 10
             default: begin
                 // 无操作或未知指令
                 reg_write_en = 1'b0;
+                alu_src_1 = 1'b0;
                 alu_src_2 = 1'b0;
                 mem_write_en = 1'b0;
                 mem_read_en = 1'b0;

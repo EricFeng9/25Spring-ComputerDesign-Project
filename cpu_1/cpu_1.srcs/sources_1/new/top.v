@@ -175,6 +175,7 @@ module top(
         .funct7(funct7),
         .alu_op(alu_op),
         .reg_write_en(reg_write_en),
+        .alu_src_1(alu_src_1),
         .alu_src_2(alu_src_2),
         .mem_write_en(mem_write_en),
         .mem_read_en(mem_read_en),
@@ -193,7 +194,7 @@ module top(
 
     // 寄存器堆 - 处理寄存器读写操作
     register_file reg_file (
-        .clk(cpu_clk),              // 使用CPU时钟
+        .clk(cpu_clk),              // 使用CPU时钟 
         .rst(rst),
         .reg_write_en(kick_off & reg_write_en), // 只在正常模式下写入寄存器
         .read_reg1(rs1),

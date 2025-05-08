@@ -21,19 +21,32 @@ module top_tb();
     // 内部监视信号（用于测试）
     wire [31:0] pc_monitor;
     wire [31:0] instruction_monitor;
-    wire [31:0] alu_result_monitor;
-    wire [31:0] reg_data1_monitor;
-    wire [31:0] reg_data2_monitor;
-    wire [31:0] r_wdata_monitor;
-    wire mem_write_en_monitor;
-    wire mem_read_en_monitor;
-    wire io_write_en_monitor;
-    wire io_read_en_monitor;
-    wire reg_write_en_monitor;
-    wire branch_taken_monitor;
-    wire kick_off_monitor;
-    wire branch_taken;
-    wire [31:0]imm;
+    wire [31:0] reg_data1;
+    wire [31:0] reg_data2;
+    wire [31:0] alu_input1;         // ALU输入1
+    wire [31:0] alu_input2;         // ALU输入2
+    wire [31:0] alu_src_1;
+    wire [31:0] alu_src_2;
+    wire [31:0] alu_result;
+    wire [31:0] imm;                // 立即数
+    wire [31:0] r_wdata;
+    wire [31:0] mem_read_data;
+    wire [31:0] mem_write_data;
+    // 监视内部信号
+    assign pc_monitor = uut.pc;
+    assign instruction_monitor = uut.instruction;
+    assign reg_data1 = uut.reg_data1;
+    assign reg_data2 = uut.reg_data2;
+    assign alu_input1 = uut.alu_input1;
+    assign alu_input2 = uut.alu_input2;
+    assign alu_src_1 = uut.alu_src_1;
+    assign alu_src_2 = uut.alu_src_2;
+    assign alu_result = uut.alu_result;
+    assign imm = uut.imm;
+    assign r_wdata = uut.r_wdata;
+    assign mem_read_data = uut.mem_read_data;
+    assign mem_write_data = uut.mem_write_data;
+    
     // 实例化顶层模块
     top uut(
         .clk(clk),
@@ -47,23 +60,8 @@ module top_tb();
         .tx(tx)
     );
     
-    // 监视内部信号
-    assign pc_monitor = uut.pc;
-    assign instruction_monitor = uut.instruction;
-    assign alu_result_monitor = uut.alu_result;
-    assign reg_data1_monitor = uut.reg_data1;
-    assign reg_data2_monitor = uut.reg_data2;
-    assign r_wdata_monitor = uut.r_wdata;
     
-    assign mem_write_en_monitor = uut.mem_write_en;
-    assign mem_read_en_monitor = uut.mem_read_en;
-    assign io_write_en_monitor = uut.io_write_en;
-    assign io_read_en_monitor = uut.io_read_en;
-    assign reg_write_en_monitor = uut.reg_write_en;
-    assign branch_taken_monitor = uut.branch_taken;
-    assign kick_off_monitor = uut.kick_off;
-    assign branch_taken = uut.branch_taken;
-    assign imm = uut.imm;
+    
     // 时钟生成
     initial begin
         clk = 0;
@@ -82,49 +80,10 @@ module top_tb();
         rst = 0;
         
         #600;
-
-        
         
         // 结束测试
         $display("测试完成");
         $finish;
     end
-    
-    // 指令解码辅助任务
-    task decode_instruction;
-        input [31:0] inst;
-        begin
-            case(inst[6:0])
-                7'b0110011: $display("R型指令: %h (add/sub/and/or/sll/srl等)", inst);
-                7'b0010011: $display("I型指令: %h (addi等)", inst);
-                7'b0000011: $display("加载指令: %h (lw等)", inst);
-                7'b0100011: $display("存储指令: %h (sw等)", inst);
-                7'b1100011: $display("分支指令: %h (beq/bne/blt/bge等)", inst);
-                7'b1101111: $display("跳转指令: %h (jal)", inst);
-                default: $display("其他指令: %h", inst);
-            endcase
-        end
-    endtask
-    
-    // 监控指令执行
-    always @(posedge clk) begin
-        if(!rst && kick_off_monitor) begin
-            decode_instruction(instruction_monitor);
-            $display("PC=%h, ALU=%h, REG1=%h, REG2=%h, WRITE_DATA=%h",
-                     pc_monitor, alu_result_monitor, reg_data1_monitor, 
-                     reg_data2_monitor, r_wdata_monitor);
-            if(branch_taken_monitor)
-                $display("---> 分支跳转发生!");
-            if(mem_write_en_monitor)
-                $display("---> 内存写入: 地址=%h, 数据=%h", alu_result_monitor, reg_data2_monitor);
-            if(mem_read_en_monitor)
-                $display("---> 内存读取: 地址=%h", alu_result_monitor);
-            if(io_write_en_monitor)
-                $display("---> IO写入: 地址=%h, 数据=%h", alu_result_monitor, reg_data2_monitor);
-            if(io_read_en_monitor)
-                $display("---> IO读取: 地址=%h", alu_result_monitor);
-        end
-    end
-    
 
 endmodule 
