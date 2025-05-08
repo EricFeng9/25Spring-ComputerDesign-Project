@@ -23,31 +23,17 @@ output [31:0]read_data2
 //·À´æ0»úÖÆ
 wire [31:0] actual_write_data = (write_reg == 5'd0) ? 32'b0 : write_data;
 wire actual_we = (write_reg == 5'd0) ? 1'b0 : reg_write_en;
+wire rst0=1'b0;
 
-register_block reg_block_1(
-    .addra(read_reg1),
-    .clka(clk),
-    .dina(32'b0),               
-    .douta(read_data1),
-    .wea(1'b0),            
-    
-    .addrb(write_reg),
-    .clkb(clk),
-    .dinb(actual_write_data),
-    .doutb(),                  
-    .web(actual_we) 
+register_file_dist r1(
+    .clk(clk),
+    .rst(rst0),
+    .reg_write_en(write_reg),
+    .read_reg1(read_reg1),
+    .read_reg2(read_reg2),
+    .write_reg(write_reg),
+    .write_data(actual_write_data),
+    .read_data1(read_data1),
+    .read_data2(read_data2)
 );
-
-register_block reg_block_2(
-    .addra(read_reg2),
-    .clka(clk),
-    .dina(32'b0),               
-    .douta(read_data2),
-    .wea(1'b0),              
-
-    .addrb(write_reg),
-    .clkb(clk),
-    .dinb(actual_write_data),
-    .doutb(),                   
-    .web(actual_we) 
-);endmodule
+endmodule
