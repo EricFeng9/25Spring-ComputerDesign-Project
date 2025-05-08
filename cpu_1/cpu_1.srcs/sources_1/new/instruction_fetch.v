@@ -48,9 +48,9 @@ module instruction_fetch(
     
     // 指令存储器实例化
     imemory32 instruction_memory(
-        .rom_clk_i(kick_off ? clk : upg_clk),      // 时钟输入（根据模式选择）
+        .clk(kick_off ? clk : upg_clk),      // 时钟输入（根据模式选择）
         .rom_adr_i(kick_off ? pc[15:2] : upg_adr[13:0]),   // 地址输入（根据模式选择）
-        .Instruction_o(instruction),                   // 指令输出
+        .instruction_o(instruction),                   // 指令输出
         // UART编程器接口
         .upg_rst_i(upg_rst),                           // UART复位
         .upg_clk_i(upg_clk),                           // UART时钟

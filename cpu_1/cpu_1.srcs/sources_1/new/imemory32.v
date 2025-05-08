@@ -5,9 +5,9 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module imemory32(
-    input wire rom_clk_i,             // 指令内存时钟
+    input wire clk,             // 指令内存时钟
     input wire [13:0] rom_adr_i,      // 指令地址输入（pc输入）
-    output wire [31:0] Instruction_o, // 指令输出
+    output wire [31:0] instruction_o, // 指令输出
     
     // UART编程接口
     input wire upg_rst_i,             // UART编程复位
@@ -17,9 +17,6 @@ module imemory32(
     input wire [31:0] upg_dat_i,      // UART编程数据
     input wire upg_done_i             // UART编程完成
 );
-
-    // 时钟选择：ROM工作时钟信号
-    wire rom_clk = rom_clk_i;
     
     // 工作模式判断：kickOff=1为正常CPU模式，kickOff=0为UART编程模式
     wire kickOff = upg_rst_i | (~upg_rst_i & upg_done_i);
@@ -31,12 +28,12 @@ module imemory32(
     wire [13:0] rom_addr = kickOff ? rom_adr_i : upg_adr_i;
     
     // 实例化指令存储器IP核
-    instruction_mem instmem(
-        .clka(rom_clk),              // 时钟输入
-        .wea(rom_we),                // 写使能
-        .addra(rom_addr),            // 地址
-        .dina(upg_dat_i),            // 写入数据（仅在编程模式时有效）
-        .douta(Instruction_o)        // 读出指令
+    instruction_mem_dist instmem(
+        .clk(clk),              // 时钟输入
+        .we(rom_we),                // 写使能
+        .a(rom_addr),            // 地址
+        .d(upg_dat_i),            // 写入数据（仅在编程模式时有效）
+        .spo(instruction_o)        // 读出指令
     );
 
 endmodule 

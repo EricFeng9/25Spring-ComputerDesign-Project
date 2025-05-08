@@ -36,12 +36,12 @@ module dmemory32(
     wire [31:0] ram_data_in = kickOff ? ram_dat_i : upg_dat_i;
     
     // 实例化数据存储器IP核
-    data_mem_ram data_ram(
-        .clka(ram_clk),            // 时钟输入
-        .wea(ram_we),              // 写使能
-        .addra(ram_addr),          // 地址
-        .dina(ram_data_in),        // 写入数据
-        .douta(ram_dat_o)          // 读出数据
+    data_ram_dist data_ram(
+        .clk(ram_clk),            // 时钟输入
+        .we(ram_we),              // 写使能
+        .a(ram_addr),          // 地址
+        .d(ram_data_in),        // 写入数据
+        .spo(ram_dat_o)          // 读出数据
     );
 
 endmodule 
