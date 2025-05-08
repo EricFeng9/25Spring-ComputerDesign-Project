@@ -55,10 +55,20 @@
    > 苏思齐
 
    - 功能：存储和管理32个通用寄存器
+
    - 输入：读寄存器地址(rs1, rs2)，写寄存器地址(rd)，写数据，写使能
+
    - 输出：两个读出的寄存器数据
+
    - 功能测试
+
    - <img src=".\图片\alu_test_5_6.png" alt=".\图片\alu_test_5_6.png" style="zoom: 80%;" />
+
+     > 5.8修改：手动实现ip core，解决了延迟（credit:冯
+
+     ![](D:\cpu_proj_5_8\25Spring-ComputerDesign-Project-5.8-3-\25Spring-ComputerDesign-Project-5.8-3-\cpu_1\图片\5_8_updated.png)
+
+     图为解决延迟后的testbench波形。
 
 4. **ALU(算术逻辑单元)**
 
@@ -345,5 +355,4 @@ parameter ALU_SUB = 4'b0001;
 *   **写回数据路径**：
     *   `mem_or_io` 模块输出的 `r_wdata` 直接连接到 `register_file` 模块的 `write_data` 输入端口。
     *   不再需要在 `top.v` 中实例化一个独立的4选1写回MUX。
-
 
