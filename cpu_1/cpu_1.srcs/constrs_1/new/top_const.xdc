@@ -1,0 +1,26 @@
+set_property IOSTANDARD LVCMOS33 [get_ports {switch[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {seg_out[4]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {seg_out[7]}]
+set_property IOSTANDARD LVCMOS33 [get_ports tx]
+set_property IOSTANDARD LVCMOS33 [get_ports start_pg]
+set_property IOSTANDARD LVCMOS33 [get_ports {switch[4]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {led[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {led[7]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {switch[7]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {seg_out[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {seg_en[3]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {seg_en[5]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {led[4]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {seg_out[5]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {seg_en[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports rx]
+set_property IOSTANDARD LVCMOS33 [get_ports {led[2]}]
+set_property PACKAGE_PIN A1 [get_ports {switch[0]}]
+
+# 时钟约束设置
+create_clock -period 10.000 -name clk [get_ports clk]
+create_clock -period 250.000 -name cpu_clk -waveform {0.000 125.000} [get_nets cpu_clk]
+create_clock -period 500.000 -name upg_clk -waveform {0.000 250.000} [get_nets upg_clk]
+
+# 声明时钟域间是异步的
+set_clock_groups -asynchronous -group [get_clocks cpu_clk] -group [get_clocks upg_clk]

@@ -1,10 +1,10 @@
 -- Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2017.4 (win64) Build 2086221 Fri Dec 15 20:55:39 MST 2017
--- Date        : Tue May  6 19:27:53 2025
+-- Date        : Fri May  9 02:24:31 2025
 -- Host        : Lekge2025 running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode funcsim
---               e:/Sustech/25Spring_ComputerDesign/Project/cpu_1/cpu_1.srcs/sources_1/ip/clk_100mhz_to_10mhz/clk_100mhz_to_10mhz_sim_netlist.vhdl
+--               E:/Sustech/25Spring_ComputerDesign/Project/25Spring-ComputerDesign-Project/cpu_1/cpu_1.srcs/sources_1/ip/clk_100mhz_to_10mhz/clk_100mhz_to_10mhz_sim_netlist.vhdl
 -- Design      : clk_100mhz_to_10mhz
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -76,14 +76,14 @@ clkout2_buf: unisim.vcomponents.BUFG
 plle2_adv_inst: unisim.vcomponents.PLLE2_ADV
     generic map(
       BANDWIDTH => "OPTIMIZED",
-      CLKFBOUT_MULT => 9,
+      CLKFBOUT_MULT => 8,
       CLKFBOUT_PHASE => 0.000000,
       CLKIN1_PERIOD => 10.000000,
       CLKIN2_PERIOD => 0.000000,
-      CLKOUT0_DIVIDE => 90,
+      CLKOUT0_DIVIDE => 128,
       CLKOUT0_DUTY_CYCLE => 0.500000,
       CLKOUT0_PHASE => 0.000000,
-      CLKOUT1_DIVIDE => 9,
+      CLKOUT1_DIVIDE => 128,
       CLKOUT1_DUTY_CYCLE => 0.500000,
       CLKOUT1_PHASE => 0.000000,
       CLKOUT2_DIVIDE => 1,

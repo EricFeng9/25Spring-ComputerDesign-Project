@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module top(
-    input wire clk,              // 时钟信号
+    input wire clk,              // 时钟信号,默认100MHz
     input wire rst,              // 复位信号 active high
     input wire [10:0]switch,     // 开关输入信号,[10:3]是SW7...SW0的值,[2:0]是X1、X2、X3的值     
     output wire [7:0] seg_en,     // 数码管使能信号
@@ -34,7 +34,7 @@ module top(
     wire [31:0] upg_dat_o;          // UART数据输出
     
     // 时钟相关
-    wire cpu_clk;                   // CPU工作时钟 100MHz
+    wire cpu_clk;                   // CPU工作时钟
     wire ram_clk;                   // 内存时钟
     wire upg_clk;                   // UART编程器时钟 10MHz
     
@@ -93,11 +93,20 @@ module top(
     wire [1:0] result_src;          // 结果输出选择信号
     
     //----------- 时钟生成 -----------
-    // 实例化时钟模块，将100MHz转换为10MHz UART时钟
-    clk_100mhz_to_10mhz clock_gen(
-        .clk_in1(clk),              // 输入时钟 100MHz
-        .clk_out1(upg_clk),         // 输出UART时钟 10MHz
-        .clk_out2(cpu_clk)          // 输出CPU时钟 还是100MHz
+
+    
+    // 使用4MHz分频器生成CPU时钟
+    clk_100mhz_to_4mhz cpu_clock_div(
+        .clk_in(clk),        // 输入100MHz时钟
+        .rst(rst),                  // 复位信号
+        .clk_out(cpu_clk)           // 输出4MHz CPU时钟
+    );
+    
+    // 使用2MHz分频器生成UART时钟
+    clk_100mhz_to_2mhz uart_clock_div(
+        .clk_in(clk),        // 输入100MHz时钟
+        .rst(rst),                  // 复位信号
+        .clk_out(upg_clk)           // 输出2MHz UART时钟
     );
     
     //----------- UART编程器控制逻辑 -----------
@@ -114,6 +123,25 @@ module top(
         end
     end
     
+    ////////////////////////////////////
+    //以下内容由ai生成
+    // 添加跨时钟域同步，减少长路径和高扇出问题
+    // 对UART复位信号进行双触发器同步
+    reg upg_rst_sync1, upg_rst_sync2;
+    always @(posedge upg_clk or posedge rst) begin
+        if (rst) begin
+            upg_rst_sync1 <= 1'b1;
+            upg_rst_sync2 <= 1'b1;
+        end else begin
+            upg_rst_sync1 <= upg_rst;
+            upg_rst_sync2 <= upg_rst_sync1;
+        end
+    end
+    // 使用同步后的信号连接到UART模块
+    wire upg_rst_synchronized;
+    assign upg_rst_synchronized = upg_rst_sync2;
+    ////////////////////////////////////
+    
     // 工作模式切换：kick_off=1为正常工作模式，kick_off=0为UART通信模式
     // 直接由开关状态决定
     assign kick_off = ~spg_bufg;
@@ -124,7 +152,7 @@ module top(
     //----------- UART编程模块 -----------
     uart_programmer uart(
         .upg_clk_i(upg_clk),        // UART时钟输入
-        .upg_rst_i(upg_rst),        // UART复位信号
+        .upg_rst_i(upg_rst_synchronized),        // UART复位信号
         .upg_rx_i(rx),              // UART接收数据
         .upg_clk_o(upg_clk_o),      // UART时钟输出
         .upg_wen_o(upg_wen_o),      // UART写使能
@@ -164,7 +192,7 @@ module top(
         
         // UART编程器接口
         .upg_clk(upg_clk),                       // UART编程时钟
-        .upg_rst(upg_rst),                       // UART编程复位
+        .upg_rst(upg_rst_synchronized),                       // UART编程复位 由ai生成
         .upg_wen(upg_wen_o),                     // UART写使能
         .upg_adr(upg_adr_o),                     // UART地址
         .upg_dat(upg_dat_o),                     // UART数据
@@ -311,7 +339,7 @@ module top(
         .ram_dat_i(kick_off ? mem_write_data : upg_dat_o),  // 写入数据
         .ram_dat_o(mem_read_data),  // 读出数据
         // UART编程器接口
-        .upg_rst_i(upg_rst),        // UART复位
+        .upg_rst_i(upg_rst_synchronized),        // UART复位 由ai生成
         .upg_clk_i(upg_clk),        // UART时钟
         .upg_wen_i(upg_wen_o & upg_adr_o[14]), // UART写使能（针对数据内存），只有当 upg_adr_o[14] 为 1 时，UART编程器的写使能信号才会传递给数据内存。
         .upg_adr_i(upg_adr_o[13:0]), // UART地址

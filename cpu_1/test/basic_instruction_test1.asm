@@ -42,20 +42,20 @@ not_equal:
     addi x13, x0, 200      # x13 = 200	p
     
 continue2:
-    blt  x2, x3, less_than # 如果x2 < x3，跳转到less_than (应该跳转，5 < 15)
+    blt  x2, x3, less_than # 如果x2 < x3，跳转到less_than (应该跳转，5 < 15)	p
     addi x14, x0, 3        # 不应执行
     j    continue3
     
 less_than:
-    addi x14, x0, 300      # x14 = 300
+    addi x14, x0, 300      # x14 = 300	p
     
 continue3:
-    bge  x1, x2, greater_eq # 如果x1 >= x2，跳转到greater_eq (应该跳转，10 >= 5)
+    bge  x1, x2, greater_eq # 如果x1 >= x2，跳转到greater_eq (应该跳转，10 >= 5)	p
     addi x15, x0, 4         # 不应执行
     j    io_test
     
 greater_eq:
-    addi x15, x0, 400      # x15 = 400
+    addi x15, x0, 400      # x15 = 400	p
     
 io_test:
     # 测试IO操作
