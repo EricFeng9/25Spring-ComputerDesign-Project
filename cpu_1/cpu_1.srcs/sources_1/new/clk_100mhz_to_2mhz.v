@@ -1,18 +1,18 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// æ—¶é’Ÿåˆ†é¢‘æ¨¡å—
-// å°†100MHzçš„è¾“å…¥æ—¶é’Ÿé™é¢‘ä¸º2MHz
-// å£°æ˜ï¼šæ­¤æ¨¡å—å®Œå…¨ç”±claude-3.7-sonnetç”Ÿæˆ
+// Ê±ÖÓ·ÖÆµÄ£¿é
+// ½«100MHzµÄÊäÈëÊ±ÖÓ½µÆµÎª2MHz
+// ÉùÃ÷£º´ËÄ£¿éÍêÈ«ÓÉclaude-3.7-sonnetÉú³É
 //////////////////////////////////////////////////////////////////////////////////
 
 module clk_100mhz_to_2mhz(
-    input wire clk_in,     // è¾“å…¥æ—¶é’Ÿ 100MHz
-    input wire rst,        // å¤ä½ä¿¡å·
-    output reg clk_out     // è¾“å‡ºæ—¶é’Ÿ 2MHz
+    input wire clk_in,     // ÊäÈëÊ±ÖÓ 100MHz
+    input wire rst,        // ¸´Î»ĞÅºÅ
+    output reg clk_out     // Êä³öÊ±ÖÓ 2MHz
 );
 
-    // 50åˆ†é¢‘ (100MHz / 50 = 2MHz)
-    // è®¡æ•°åˆ°25ç„¶åç¿»è½¬æ—¶é’Ÿï¼ˆ25*2=50åˆ†é¢‘ï¼‰
+    // 50·ÖÆµ (100MHz / 50 = 2MHz)
+    // ¼ÆÊıµ½25È»ºó·­×ªÊ±ÖÓ£¨25*2=50·ÖÆµ£©
     reg [5:0] counter;
     
     always @(posedge clk_in or posedge rst) begin
@@ -20,9 +20,9 @@ module clk_100mhz_to_2mhz(
             counter <= 6'b0;
             clk_out <= 1'b0;
         end else begin
-            if (counter == 6'd24) begin // è®¡æ•°åˆ°24ï¼ˆä»0å¼€å§‹ï¼Œå…±25ä¸ªè®¡æ•°ï¼‰
+            if (counter == 6'd24) begin // ¼ÆÊıµ½24£¨´Ó0¿ªÊ¼£¬¹²25¸ö¼ÆÊı£©
                 counter <= 6'b0;
-                clk_out <= ~clk_out;  // ç¿»è½¬æ—¶é’Ÿ
+                clk_out <= ~clk_out;  // ·­×ªÊ±ÖÓ
             end else begin
                 counter <= counter + 1'b1;
             end

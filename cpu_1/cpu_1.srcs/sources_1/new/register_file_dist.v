@@ -21,8 +21,8 @@ module register_file_dist(
     
     // 读操作 - 组合逻辑，无延迟
     // 特殊处理读写同一寄存器的情况（读写冲突的写优先）
-    assign read_data1 = (reg_write_en && read_reg1 == write_reg && write_reg != 0) ? write_data : registers[read_reg1];
-    assign read_data2 = (reg_write_en && read_reg2 == write_reg && write_reg != 0) ? write_data : registers[read_reg2];
+    assign read_data1 = registers[read_reg1];
+    assign read_data2 = registers[read_reg2];
     
     // 初始化寄存器值为0
     integer i;

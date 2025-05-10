@@ -1,5 +1,8 @@
 `timescale 1ns / 1ps
-//ai生成的流水灯代码
+//////////////////////////////////////////////////////////////////////////////////
+// 数码管驱动模块 - AI生成的流水灯代码
+//////////////////////////////////////////////////////////////////////////////////
+
 module display_controller(
     input wire clk,                 
     input wire rst,                  // 高电平有效的复位信号
@@ -46,7 +49,7 @@ module display_controller(
     // 扫描计数器控制，每个clkout周期更新一次scan_cnt
     always @(posedge clkout) begin
         if(rst || !led_display_ctrl) begin
-        //进行了人为修改 ：必须片选过后才生效
+        //进行了人为修改：必须片选过后才生效
             scan_cnt <= 0;
         end else begin
             if(scan_cnt == 3'd7)

@@ -22,36 +22,44 @@
 
 
 module alu(
-input [31:0]a,
-input [31:0]b,
-input [1:0]alu_op,
-output reg [31:0]result,
-output zero,
-input [2:0]funct3,
-input inst_30
-
-    );
-wire [3:0]ctrl_output;
-alu_control alu_ctrl(
-.funct3(funct3),
-.inst_30(inst_30),
-.alu_op(alu_op),
-.ctrl_output(ctrl_output)
+    input [31:0] a,           // 第一个操作数
+    input [31:0] b,           // 第二个操作数
+    input [1:0] alu_op,       // 主控制单元传来的操作码
+    input [2:0] funct3,       // 指令的funct3字段
+    input [6:0] funct7,       // 指令的funct7字段
+    input [6:0] opcode,       // 指令的opcode字段
+    output reg [31:0] result, // ALU结果
+    output zero               // 零标志
 );
-assign zero=( result ==32'b0 )?  1'b1 : 1'b0;
-always @(*) begin
-    case(ctrl_output)
-    `ADD:result=a+b;
-    `SUB:result=a-b;
-    `SLL:result= a << b[4:0];
-    `SRL:result= a >> b[4:0];
-    `SRA:result=$signed(a) >>> b[4:0];
-    `SLT:result=($signed(a) < $signed(b)) ? 32'b1 : 32'b0;
-    `SLTU:result=(a < b) ? 32'b1 : 32'b0;
-    `XOR:result=a^b;
-    `OR:result=a|b;
-    `AND:result=a&b;
-    default:result=32'b0;
-    endcase
-end
+    // ALU控制信号
+    wire [3:0] ctrl_output;
+    
+    // 实例化ALU控制单元
+    alu_control alu_ctrl(
+        .alu_op(alu_op),
+        .funct3(funct3),
+        .funct7(funct7),
+        .opcode(opcode),
+        .ctrl_output(ctrl_output)
+    );
+    
+    // 零标志
+    assign zero = (result == 32'b0) ? 1'b1 : 1'b0;
+    
+    // ALU操作
+    always @(*) begin
+        case(ctrl_output)
+            `ADD:  result = a + b;
+            `SUB:  result = a - b;
+            `SLL:  result = a << b[4:0];
+            `SRL:  result = a >> b[4:0];
+            `SRA:  result = $signed(a) >>> b[4:0];
+            `SLT:  result = ($signed(a) < $signed(b)) ? 32'b1 : 32'b0;
+            `SLTU: result = (a < b) ? 32'b1 : 32'b0;
+            `XOR:  result = a ^ b;
+            `OR:   result = a | b;
+            `AND:  result = a & b;
+            default: result = 32'b0;
+        endcase
+    end
 endmodule

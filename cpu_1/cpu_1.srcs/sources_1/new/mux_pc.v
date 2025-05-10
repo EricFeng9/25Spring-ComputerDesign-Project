@@ -1,19 +1,19 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// PCå¤šè·¯å¤ç”¨å™¨æ¨¡å—
-// ç”¨äºé€‰æ‹©ä¸‹ä¸€ä¸ªPCå€¼
+// PC¶àÂ·¸´ÓÃÆ÷Ä£¿é
+// ÓÃÓÚÑ¡ÔñÏÂÒ»¸öPCÖµ
 //////////////////////////////////////////////////////////////////////////////////
 
 module mux_pc(
     input wire [31:0] pc_plus4,        // PC+4
-    input wire [31:0] branch_target,   // åˆ†æ”¯/è·³è½¬ç›®æ ‡åœ°å€
-    input wire branch_taken,           // åˆ†æ”¯æ¡ä»¶æ»¡è¶³
-    input wire jump,                   // è·³è½¬æŒ‡ä»¤
-    output wire [31:0] pc_next         // ä¸‹ä¸€ä¸ªPCå€¼
+    input wire [31:0] branch_target,   // ·ÖÖ§/Ìø×ªÄ¿±êµØÖ·
+    input wire branch_taken,           // ·ÖÖ§Ìõ¼şÂú×ã
+    input wire jump,                   // Ìø×ªÖ¸Áî
+    output wire [31:0] pc_next         // ÏÂÒ»¸öPCÖµ
 );
-    // åˆ¤æ–­æ˜¯å¦éœ€è¦è·³è½¬æˆ–åˆ†æ”¯
+    // ÅĞ¶ÏÊÇ·ñĞèÒªÌø×ª»ò·ÖÖ§
     wire do_branch_jump = (branch_taken || jump);
     
-    // é€‰æ‹©ä¸‹ä¸€ä¸ªPCå€¼
+    // Ñ¡ÔñÏÂÒ»¸öPCÖµ
     assign pc_next = do_branch_jump ? branch_target : pc_plus4;
 endmodule 

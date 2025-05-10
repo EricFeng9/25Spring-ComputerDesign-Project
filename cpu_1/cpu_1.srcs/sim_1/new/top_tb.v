@@ -1,40 +1,44 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½Ä¼ï¿½
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ö¸ï¿½ï¿½Ä£Ê½
+// ¶¥²ãÄ£¿é²âÊÔÎÄ¼þ
+// ÓÃÓÚµ¥ÖÜÆÚCPU¹¦ÄÜ·ÂÕæ
 //////////////////////////////////////////////////////////////////////////////////
 
 module top_tb();
-    // ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
-    reg clk;                  // Ê±ï¿½ï¿½ï¿½Åºï¿½
-    reg rst;                  // ï¿½ï¿½Î»ï¿½Åºï¿½
-    reg [10:0] switch;        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
-    reg start_pg;             // UARTï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
-    reg rx;                   // UARTï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // ÊäÈëÐÅºÅ¶¨Òå
+    reg clk;                  // ÏµÍ³Ê±ÖÓ
+    reg rst;                  // ¸´Î»ÐÅºÅ
+    reg [10:0] switch;        // ¿ª¹ØÊäÈëÐÅºÅ
+    reg start_pg;             // UART±à³Ì¿ªÊ¼ÐÅºÅ
+    reg rx;                   // UART½ÓÊÕÊý¾Ý
     
-    // ï¿½ï¿½ï¿½ï¿½Åºï¿½
-    wire [7:0] seg_en;        // ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½Åºï¿½
-    wire [7:0] seg_out;       // ï¿½ï¿½ï¿½ï¿½Ü¶ï¿½Ñ¡ï¿½Åºï¿½
-    wire [7:0] led;           // LEDï¿½ï¿½ï¿½ï¿½Åºï¿½
-    wire tx;                  // UARTï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // Êä³öÐÅºÅ
+    wire [7:0] seg_en;        // ÊýÂë¹ÜÊ¹ÄÜÐÅºÅ
+    wire [7:0] seg_out;       // ÊýÂë¹Ü¶ÎÑ¡ÐÅºÅ
+    wire [7:0] led;           // LEDÖ¸Ê¾µÆ
+    wire tx;                  // UART·¢ËÍÊý¾Ý
     
-    // ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÅºÅ£ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½Ô£ï¿½
+    // ¼à¿ØÐÅºÅ£¨ÓÃÓÚµ÷ÊÔºÍ¹Û²ì£©
+    wire cpu_clk;
     wire [31:0] pc_monitor;
     wire [31:0] instruction_monitor;
     wire [31:0] reg_data1;
     wire [31:0] reg_data2;
-    wire [31:0] alu_input1;         // ALUï¿½ï¿½ï¿½ï¿½1
-    wire [31:0] alu_input2;         // ALUï¿½ï¿½ï¿½ï¿½2
+    wire [31:0] alu_input1;         // ALUÊäÈë1
+    wire [31:0] alu_input2;         // ALUÊäÈë2
     wire [31:0] alu_src_1;
     wire [31:0] alu_src_2;
     wire [31:0] alu_result;
-    wire [31:0] imm;                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    wire [31:0] imm;                // Á¢¼´Êý
     wire [31:0] r_wdata;
     wire [31:0] mem_read_data;
     wire [31:0] mem_write_data;
     wire [31:0] io_wdata;
     wire [31:0] io_rdata;
-    // ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½Åºï¿½
+    wire [1:0] wb_select;
+    wire [1:0] alu_op;
+    // Á¬½Ó¼à¿ØÐÅºÅ
+    assign cpu_clk = uut.cpu_clk;
     assign pc_monitor = uut.pc;
     assign instruction_monitor = uut.instruction;
     assign reg_data1 = uut.reg_data1;
@@ -50,7 +54,9 @@ module top_tb();
     assign mem_write_data = uut.mem_write_data;
     assign io_wdata = uut.io_wdata;
     assign io_rdata = uut.io_rdata;
-    // Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
+    assign wb_select = uut.wb_select;
+    assign alu_op = uut.alu_op;
+    // ÊµÀý»¯±»²âÊÔÄ£¿é
     top uut(
         .clk(clk),
         .rst(rst),
@@ -65,27 +71,27 @@ module top_tb();
     
     
     
-    // Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // Ê±ÖÓÉú³ÉÆ÷
     initial begin
         clk = 0;
-        forever #5 clk = ~clk;  // 100MHzÊ±ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½10ns)
+        forever #5 clk = ~clk;  // 100MHzÊ±ÖÓ (ÖÜÆÚ10ns)
     end
     
-    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // ²âÊÔ¼¤ÀøÐÅºÅ
     initial begin
-        // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        // ³õÊ¼»¯ÊäÈëÐÅºÅ
         rst = 1;
         switch = 11'b0;
-        start_pg = 0;         // È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½Ä£Ê½ (kick_off=1)
+        start_pg = 0;         // Ñ¡ÔñÕý³£Ö´ÐÐÄ£Ê½ (kick_off=1)
         
-        // ï¿½È´ï¿½Ê±ï¿½ï¿½ï¿½Åºï¿½ï¿½È¶ï¿½
-        #2000;  // ï¿½ï¿½ï¿½Ó¸ï¿½Î»Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦2MHzÊ±ï¿½ï¿½
+        // ÊÍ·Å¸´Î»ÐÅºÅ¿ªÊ¼
+        #300;
         rst = 0;
         
-        #10000;  // ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦2MHzÊ±ï¿½Ó£ï¿½ï¿½ï¿½4MHzï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
+        #10000; //250nsÃ¿ÌõÖ¸Áî£¬10000·ÂÕæ40ÌõÖ¸Áî
         
-        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-        $display("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
+        // ½áÊø·ÂÕæ
+        $display("·ÂÕæ½áÊø");
         $finish;
     end
 

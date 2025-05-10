@@ -21,6 +21,11 @@
 
 
 module alu_mux(
-
-    );
+    input wire [31:0] data1,    // 输入数据1
+    input wire [31:0] data0,    // 输入数据0
+    input wire sel,             // 选择信号
+    output wire [31:0] alu_input // 输出数据
+);
+    // 根据选择信号选择输出
+    assign alu_input = sel ? data1 : data0;
 endmodule
