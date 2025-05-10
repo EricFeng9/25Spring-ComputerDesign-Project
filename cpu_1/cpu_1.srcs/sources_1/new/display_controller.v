@@ -7,7 +7,7 @@
 module display_controller(
     input wire clk,                 
     input wire rst,                  // 高电平有效的复位信号
-    input wire led_display_ctrl,     // 数码管显示控制信号
+    input wire seg_display_ctrl,     // 数码管显示控制信号
     input wire [31:0] result1,       // 32位结果信号1
     input wire [31:0] result2,       // 32位结果信号2
     input wire prog_mode,            // 编程模式标志
@@ -19,7 +19,7 @@ module display_controller(
     // 内部计数器和时钟分频
     reg [31:0] cnt;                  // 分频计数器
     reg clkout;                      // 分频后的时钟
-    parameter period = 200000;       // 分频系数(500Hz)
+    parameter period = 10;       // 分频系数(500Hz)
     
     // 扫描计数器用于选择当前显示的数码管
     reg [2:0] scan_cnt;              // 扫描计数器(0-7)
@@ -47,12 +47,12 @@ module display_controller(
     parameter G_CHAR = 8'b11110110;
     
     // 分频：系统时钟 -> 扫描时钟
-    always @(posedge clk) begin
+    always @(posedge clk or posedge rst) begin  // 添加异步复位
         if(rst) begin
             cnt <= 0;
-            clkout <= 0;
+            clkout <= 1'b0;  // 明确设为0
         end else begin
-            if(cnt == period-1) begin
+            if(cnt >= period-1) begin  // 使用>=避免计数错误
                 cnt <= 0;
                 clkout <= ~clkout;
             end else begin
@@ -61,15 +61,14 @@ module display_controller(
         end
     end
     
-    // 扫描计数器控制，每个clkout周期更新一次scan_cnt
-    always @(posedge clkout) begin
-        if(rst || !led_display_ctrl) begin
-            scan_cnt <= 0;
+    // 扫描计数器控制
+    always @(posedge clkout or posedge rst) begin  // 添加异步复位
+        if(rst) begin
+            scan_cnt <= 3'd0;
+        end else if(!seg_display_ctrl) begin  // 分开复位和使能检查
+            scan_cnt <= 3'd0;
         end else begin
-            if(scan_cnt == 3'd7)
-                scan_cnt <= 0;
-            else
-                scan_cnt <= scan_cnt + 1;
+            scan_cnt <= scan_cnt + 1;  // 简化逻辑，始终循环
         end
     end
     

@@ -71,7 +71,7 @@ output wire [31 : 0] spo;
     .C_FAMILY("artix7"),
     .C_ADDR_WIDTH(14),
     .C_DEFAULT_DATA("0"),
-    .C_DEPTH(16384),
+    .C_DEPTH(9600),
     .C_HAS_CLK(1),
     .C_HAS_D(1),
     .C_HAS_DPO(0),

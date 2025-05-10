@@ -9,7 +9,8 @@
 module top(
     input wire clk,              // 系统时钟,约为100MHz
     input wire rst,              // 复位信号 active high
-    input wire [10:0]switch,     // 开关输入信号,[10:3]是SW7...SW0开关,[2:0]是X1、X2、X3开关     
+    input wire [10:0]switch,     // 开关输入信号,[10:3]是SW7...SW0开关,[2:0]是X1、X2、X3开关 
+    input wire led_en_button,           // led显示确定键    
     output wire [7:0] seg_en,     // 数码管使能信号
     output wire [7:0] seg_out,    // 数码管段选信号(gfedcba)
     output reg [7:0] led,        // 输出led指示灯
@@ -74,7 +75,6 @@ module top(
     wire io_write_en;               // IO写使能信号 control_unit 输出
     wire [1:0] wb_select;           // 写回选择信号 control_unit 输出
     wire [31:0] addr_out;           // 内存地址信号
-    reg [31:0] io_rdata;            // 从IO设备读出的数据(通用)
     wire [31:0] r_wdata;            // 从mem or io读出的写数据
     wire [31:0] io_wdata;           // 写入IO设备的数据
     wire led_ctrl;                  // LED控制信号
@@ -274,15 +274,51 @@ module top(
     );
     
     //----------- IO相关信号 -----------
-    // 直接将开关值赋给一个中间信号，或者直接连接到 mem_or_io 的 io_rdata 输入
+    // 直接将开关值赋给一个中间信号，连接到 mem_or_io 的 io_rdata 输入
     wire [31:0] switch_values_extended = {21'b0, switch[10:0]}; // 使用所有11位开关，高位补零
-    // LED的驱动逻辑可以保留：
-    always @(*) begin
-        if(led_ctrl) begin
-            led <= io_wdata[7:0];
+    
+    // LED按钮控制逻辑
+    reg led_en_button_r1;
+    reg led_en_button_r2;
+    wire led_en_button_posedge;  // 按钮上升沿检测
+    reg [7:0] led_value;     // 存储实际的LED值
+    reg [7:0] displayed_led; // 当前显示的LED值
+    
+    // 按钮上升沿检测
+    always @(posedge cpu_clk or posedge rst) begin
+        if (rst) begin
+            led_en_button_r1 <= 0;
+            led_en_button_r2 <= 0;
+        end else begin
+            led_en_button_r1 <= led_en_button;
+            led_en_button_r2 <= led_en_button_r1;
         end
-        else begin
+    end
+    
+    assign led_en_button_posedge = led_en_button_r1 & ~led_en_button_r2;  // 上升沿检测,只有在按钮从低到高变化的瞬间才会返回1
+    
+    // LED值更新逻辑
+    always @(posedge cpu_clk or posedge rst) begin
+        if (rst) begin
+            led_value <= 8'b0;
+        end else if (led_ctrl) begin
+            led_value <= io_wdata[7:0];  // 保存要显示的LED值
+        end
+    end
+    
+    // LED显示逻辑
+    always @(posedge cpu_clk or posedge rst) begin
+        if (rst) begin
+            displayed_led <= 8'b0;
             led <= 8'b0;
+        end else if (led_en_button_posedge && led_ctrl) begin
+            displayed_led <= led_value;  // 按钮按下时更新显示的LED值
+            led <= led_value;
+        end else if (!led_ctrl) begin
+            displayed_led <= 8'b0;
+            led <= 8'b0;  // 非LED控制模式时，LED关闭
+        end else begin
+            led <= displayed_led;  // 保持当前显示
         end
     end
     
@@ -293,6 +329,7 @@ module top(
         .mem_read_en(kick_off & mem_read_en),   // 内存读使能
         .mem_write_en(kick_off & mem_write_en), // 内存写使能
         .addr_in(alu_result),
+        .funct3(funct3),                       // 传递funct3以支持lb/lbu指令
         .addr_out(addr_out),             // 内存地址信号
         .m_rdata(mem_read_data),
         .io_rdata(switch_values_extended), // 直接传递开关值
@@ -312,7 +349,7 @@ module top(
     display_controller udisplay_controller(
         .clk(cpu_clk),
         .rst(rst),
-        .led_display_ctrl(~kick_off | seg_display_ctrl),// 带入kick_off信号,0表示正常工作模式,led显示控制信号
+        .seg_display_ctrl(kick_off ? seg_display_ctrl : 1'b1),  // 正常模式使用seg_display_ctrl, 编程模式显示状态
         .result1(io_wdata),
         .result2(io_wdata),
         .prog_mode(~kick_off),             // 带入kick_off信号,0表示正常工作模式

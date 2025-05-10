@@ -1,11 +1,11 @@
 -- Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2017.4 (win64) Build 2086221 Fri Dec 15 20:55:39 MST 2017
--- Date        : Thu May  8 11:29:29 2025
+-- Date        : Sun May 11 01:45:46 2025
 -- Host        : Lekge2025 running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode synth_stub -rename_top data_ram_dist -prefix
---               data_ram_dist_ instruction_mem_dist_stub.vhdl
--- Design      : instruction_mem_dist
+-- Command     : write_vhdl -force -mode synth_stub
+--               E:/Sustech/25Spring_ComputerDesign/Project/25Spring-ComputerDesign-Project/cpu_1/cpu_1.srcs/sources_1/ip/data_ram_dist/data_ram_dist_stub.vhdl
+-- Design      : data_ram_dist
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a35tcsg324-1
 -- --------------------------------------------------------------------------------

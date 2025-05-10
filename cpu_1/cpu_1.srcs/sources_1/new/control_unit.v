@@ -37,7 +37,7 @@ output reg [1:0] wb_select  // 写回数据源选择信号: 00:ALU结果, 01:Mem/IO数据, 10
     // 定义IO地址常量 (与mem_or_io.v中一致)
     parameter LED_BASE = 32'hFFFFC600;
     parameter SWITCH_BASE = 32'hFFFFC700;
-    parameter SEG_DISPLAY_BASE = 32'hFFFFC700;
+    parameter SEG_DISPLAY_BASE = 32'hFFFFC500;
     
     always @(*) begin
         // 默认值
